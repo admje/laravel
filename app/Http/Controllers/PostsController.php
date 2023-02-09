@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
+//use Illuminate\Support\Facades\DB;
 
 class PostsController extends Controller
 {
-
-
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +16,24 @@ class PostsController extends Controller
      */
     public function index()
     {
-        return view('posts.index', ['posts' => BlogPost::all()]);
+        // DB::enableQueryLog();
+
+        // $posts = BlogPost::with('comments')->get();
+
+        // foreach($posts as $post){
+        //     foreach ($post->comments as $comment){
+        //         echo $comment->content;
+        //     }
+            
+        // }
+
+        // dd(DB::getQueryLog());
+
+        // Comments_count
+        
+        return view(
+            'posts.index', 
+            ['posts' => BlogPost::withCount('comments')->get()]);
 
     }
 
@@ -57,7 +73,9 @@ class PostsController extends Controller
     {
         // abort_if(!isset($this->posts[$id]), 404);
 
-        return view('posts.show', ['post' => blogPost::findOrFail($id)]);
+        return view('posts.show', [
+            'post' => BlogPost::with('comments')->findOrFail($id)
+        ]);
     }
 
     /**
